@@ -2,7 +2,7 @@
 title: "カスタムドメインの裏側を覗いてみる"
 emoji: "🫣"
 type: "tech" # tech: 技術記事 / idea: アイデア
-topics: ["github", "cloudflare", "DNS", "初心者"]
+topics: ["github", "cloudflare", "DNS"]
 published: false
 ---
 
