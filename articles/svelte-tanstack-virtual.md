@@ -15,7 +15,7 @@ Virtual Scroll とは、大量のリストがあったときに、リスト全�
 実装するときには、TanStack Virtual や 各フレームワークごとにライブラリ（Svelte なら svelte-virtual-list）を使うのが簡単です。今回は公式ドキュメントの充実さから、TanStack Virtual を採用しました。
 # Svelte 5 + TanStack Virtual
 まずは、公式ドキュメントの例を見てみます。
-```html
+```html:+page.svelte
 <script lang="ts">
   import { createVirtualizer } from '@tanstack/svelte-virtual'
 
@@ -73,7 +73,7 @@ Virtual Scroll とは、大量のリストがあったときに、リスト全�
 これは Svelte 5 ではないので、 runes を使って書き直していきます。
 
 まず、このコードでは、 `virtualListElement` の変更を `$:` によって追っています。具体的には、 bind されたときに `rowVirtualizer` と `columnVirtualizer` も変更されています。 Svelte ５ に以降するときには、 `$:` を　`$derived` または `$effect` で書き直すのですが、今回は `createVirtualizer` が イベントリスナーを登録しているので、 副作用として `$effect` で管理するのが適切です。また、 `$effect` の中で更新するので、 `rowVirtualzer` と `columnVirtualizer` も `$state` で宣言します。 型は `createVirtualizer<HTMLDivElement, HTMLDivElement>` の返り値の型である、`Readable<SvelteVirtualizer<HTMLDivElement, HTMLDivElement>>` となり、 `undefined` 初期化します。
-```html
+```html:+page.svelte
 <script lang="ts">
     import { createVirtualizer } from "@tanstack/svelte-virtual";
     import type { Readable } from "svelte/store";
@@ -138,6 +138,12 @@ Virtual Scroll とは、大量のリストがあったときに、リスト全�
 </style>
 ```
 # セルがレンダリングされたタイミングで、各セルの状態を初期化したい
-今回はスプレッドシートを作っているので、
+今回はスプレッドシートを作っているので、セルごとにユーザー入力を受け取って、その入力をグローバルな状態として定義したいです。ナイーブな方法としては、1000 * 1000 の二次元配列をリアクティブな値として定義して、それを virtual scroll によってレンダリングする方法が考えられますが、それだとリアクティブていぎ定義するのに莫大な計算コストがかかってしまい、動作がとても重くなってしまいます。
+そこで、レンダリングされたセルにだけ初期化する方法（遅延初期化）を実装してみたいと思います。
+```html:+page.svelte
+```
+```html:Cell.svelte
+```
+
 # さいごに
-多分もっといい方法があるはずなので、思いついた方は是非コメントで教えてくださると助かります。SvelteMap は試してみたのですが、上手く動かなかったです。
+多分もっといい方法があるはずなので、思いついた方は是非コメントで教えてくださると助かります。SvelteMap は試してみたのですが、上手く実装できなかったです。
