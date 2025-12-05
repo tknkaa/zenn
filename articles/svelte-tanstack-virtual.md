@@ -14,7 +14,7 @@ ut.code(); Advent Calendar 5 日目です。
 Virtual Scroll とは、大量のリストがあったときに、リスト全体を DOM に展開するのではなく、現在のスクロール位置で実際に見えている項目（とその近辺の項目）だけをレンダリングする技術のことです。SNS のタイムラインやスプレッドシートが例として分かりやすいかと思います。
 実装するときには、TanStack Virtual や 各フレームワークごとにライブラリ（Svelte なら svelte-virtual-list）を使うのが簡単です。今回は公式ドキュメントの充実さから、TanStack Virtual を採用しました。
 # Svelte 5 + TanStack Virtual
-まずは、公式ドキュメントの例を見てみます。
+まずは、公式ドキュメントの例を見てみます。この例では、まず HTMLDivElement を定義して、`$:` によってその変更を追い、bind されたタイミングで `rowVirtualizer` と `columnVirtualizer` を初期化しています。
 ```ts:+page.svelte
 <script lang="ts">
   import { createVirtualizer } from '@tanstack/svelte-virtual'
@@ -72,7 +72,7 @@ Virtual Scroll とは、大量のリストがあったときに、リスト全�
 
 これは Svelte 5 ではないので、 runes を使って書き直していきます。
 
-まず、このコードでは、 `virtualListElement` の変更を `$:` によって追っています。具体的には、 bind されたときに `rowVirtualizer` と `columnVirtualizer` も変更されています。 Svelte ５ に以降するときには、 `$:` を　`$derived` または `$effect` で書き直すのですが、今回は `createVirtualizer` が イベントリスナーを登録しているので、 副作用として `$effect` で管理するのが適切です。また、 `$effect` の中で更新するので、 `rowVirtualzer` と `columnVirtualizer` も `$state` で宣言します。 型は `createVirtualizer<HTMLDivElement, HTMLDivElement>` の返り値の型である、`Readable<SvelteVirtualizer<HTMLDivElement, HTMLDivElement>>` となり、 `undefined` 初期化します。
+Svelte ５ に移行するときには、 `$:` を　`$derived` または `$effect` で書き直すのですが、今回は `createVirtualizer` が イベントリスナーを登録しているので、 副作用として `$effect` で管理するのが適切かと思います。また、 `$effect` の中で更新するので、 `rowVirtualzer` と `columnVirtualizer` も `$state` で宣言します。 型は `createVirtualizer<HTMLDivElement, HTMLDivElement>` の返り値の型である、`Readable<SvelteVirtualizer<HTMLDivElement, HTMLDivElement>>` となり、 `undefined` で初期化します。
 ```ts:+page.svelte
 <script lang="ts">
     import { createVirtualizer } from "@tanstack/svelte-virtual";
@@ -138,7 +138,7 @@ Virtual Scroll とは、大量のリストがあったときに、リスト全�
 </style>
 ```
 # セルがレンダリングされたタイミングで、各セルの状態を初期化したい
-今回はスプレッドシートを作っているので、セルごとにユーザー入力を受け取って、その入力をグローバルな状態として定義したいです。ナイーブな方法としては、1000 * 1000 の二次元配列をリアクティブな値として定義して、それを virtual scroll によってレンダリングする方法が考えられますが、それだとリアクティブていぎ定義するのに莫大な計算コストがかかってしまい、動作がとても重くなってしまいます。
+今回はスプレッドシートを作っているので、セルごとにユーザー入力を受け取って、その入力をグローバルな状態として反映させたいです。ナイーブな方法としては、1000 * 1000 の二次元配列をリアクティブな値として定義して、それを virtual scroll によってレンダリングする方法が考えられますが、それだとリアクティブな値を定義するのに莫大な計算コストがかかってしまい、動作がとても重くなってしまいます。
 そこで、レンダリングされたセルにだけ初期化する方法（遅延初期化）を実装してみたいと思います。
 ```ts:+page.svelte
 <script lang="ts">
@@ -252,4 +252,5 @@ Virtual Scroll とは、大量のリストがあったときに、リスト全�
 https://github.com/tknkaa/svelte-tanstack-virtual-sample
 
 # さいごに
-多分もっといい方法があるはずなので、思いついた方は是非コメントで教えてくださると助かります。SvelteMap は試してみたのですが、上手く実装できなかったです。
+SvelteMap は試してみたのですが、上手く実装できなかったです。SvelteMap で実装する場合はキーはどうなるんですかね。AI と相談した感じ `${x}-${y}` とかになりそうな気がしていて、実際 `grid` を `Record<string, CellType>` で定義しても実装して動かすところまでできました。ただ、それだと毎回 `${x}-${y}` を x, y に直す必要があるので、二次元配列のほうが実装として分かりやすいのかな〜と思います。
+多分もっといい方法があるはずなので、思いついた方は是非コメントで教えてくださると助かります。
