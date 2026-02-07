@@ -3,7 +3,7 @@ title: "カスタムドメインの裏側を覗いてみる"
 emoji: "🫣"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["github", "cloudflare", "DNS"]
-published: true
+published: false
 ---
 
 はじめまして、たなかです。私は普段、大学のエンジニアサークルで開発をしているのですが、GitHub Pages でデプロイしたサイトのカスタムドメインを Cloudflare で設定するということがあり、そこで何が起きているのかよく分からなかったので、調べてまとめてみたいと思います。
