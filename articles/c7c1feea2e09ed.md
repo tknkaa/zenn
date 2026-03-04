@@ -1,5 +1,5 @@
 ---
-title: "Copilotのセッションを簡単に再開できるCLIツールを作りました。"
+title: "Copilot CLIのセッションを簡単に再開できるCLIツールを作りました。"
 emoji: "✨"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["ai", "githubcopilot", "cli"]
